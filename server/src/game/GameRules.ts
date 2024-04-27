@@ -1,12 +1,12 @@
 import { GameState } from './GameState';
 
 export class GameRules {
-    constructor(private gameState: GameState) {}
+	constructor(private gameState: GameState) { }
 
-    applyRules() {
-        // Here you would check for things like game over conditions,
-        // scoring, and other game rules.
-    }
+	applyRules() {
+		// Here you would check for things like game over conditions,
+		// scoring, and other game rules.
+	}
 
-    // Additional methods for specific rules like checkGameOver, handleScoring, etc.
+	// Additional methods for specific rules like checkGameOver, handleScoring, etc.
 }

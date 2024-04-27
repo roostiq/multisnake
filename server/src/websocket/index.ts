@@ -3,46 +3,46 @@ import { Game } from '../game';
 import * as http from 'http';
 
 export function setupWebSocketServer(server: http.Server) {
-    const wss = new WebSocketServer({ server });
-    const game = new Game(broadcastGameState);
+	const wss = new WebSocketServer({ server });
+	const game = new Game(broadcastGameState);
 
-    function broadcastGameState() {
-        const stateJson = JSON.stringify(game.getPublicGameState());
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(stateJson);
-            }
-        });
-    }
+	function broadcastGameState() {
+		const stateJson = JSON.stringify(game.getPublicGameState());
+		wss.clients.forEach((client) => {
+			if (client.readyState === WebSocket.OPEN) {
+				client.send(stateJson);
+			}
+		});
+	}
 
-    wss.on('connection', (ws: WebSocket) => {
-        console.log('Client connected');
+	wss.on('connection', (ws: WebSocket) => {
+		console.log('Client connected');
 
-        const dimensions = game.getDimensions();
-        const message = {
-            type: 'gameSetup',
-            dimensions: dimensions
-        };
-        ws.send(JSON.stringify(message));
+		const dimensions = game.getDimensions();
+		const message = {
+			type: 'gameSetup',
+			dimensions: dimensions
+		};
+		ws.send(JSON.stringify(message));
 
-        const playerId = generateUniqueId();
+		const playerId = generateUniqueId();
 
-        game.addPlayer(playerId);
+		game.addPlayer(playerId);
 
-        ws.on('message', (message) => {
-            const data = JSON.parse(message.toString());
-            game.handleMessage(playerId, data);
-        });
+		ws.on('message', (message) => {
+			const data = JSON.parse(message.toString());
+			game.handleMessage(playerId, data);
+		});
 
-        ws.on('close', () => {
-            console.log('Client disconnected');
-            game.removePlayer(playerId);
-        });
-    });
+		ws.on('close', () => {
+			console.log('Client disconnected');
+			game.removePlayer(playerId);
+		});
+	});
 
-    game.start(); 
+	game.start();
 }
 
 function generateUniqueId() {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }

@@ -4,59 +4,60 @@ import { CollisionManager } from './CollisionManager';
 import { GameRules } from './GameRules';
 
 export class Game {
-    private gameState = new GameState(60, 40);
-    private collisionManager = new CollisionManager(this.gameState);
-    private gameRules = new GameRules(this.gameState);
-    private intervalId: NodeJS.Timeout | null = null;
-    private broadcastGameState: () => void;
+	private gameState = new GameState(60, 40);
+	private collisionManager = new CollisionManager(this.gameState);
+	private gameRules = new GameRules(this.gameState);
+	private intervalId: NodeJS.Timeout | null = null;
+	private broadcastGameState: () => void;
 
-    constructor(broadcastMethod: () => void) {
-        this.broadcastGameState = broadcastMethod;
-    }
+	constructor(broadcastMethod: () => void) {
+		this.broadcastGameState = broadcastMethod;
+	}
 
-    init() {
-        this.gameState.addFood(); 
-    }
+	init() {
+		this.gameState.addFood();
+	}
 
-    start() {
-        this.init();
-        this.intervalId = setInterval(() => {
-            this.update();
-        }, 100); 
-    }
+	start() {
 
-    stop() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
-        }
-    }
+		this.init();
+		this.intervalId = setInterval(() => {
+			this.update();
+		}, 100);
+	}
 
-    update() {
-        this.gameState.updateSnakes();
-        this.collisionManager.checkCollisions();
-        this.gameRules.applyRules();
-        this.broadcastGameState();
-    }
+	stop() {
+		if (this.intervalId) {
+			clearInterval(this.intervalId);
+			this.intervalId = null;
+		}
+	}
 
-    handleMessage(id: string, data: any) {
-        if (data.type === 'change_direction') {
-            this.gameState.handleDirectionChange(id, data.direction);
-        }
-    }
+	update() {
+		this.gameState.updateSnakes();
+		this.collisionManager.checkCollisions();
+		this.gameRules.applyRules();
+		this.broadcastGameState();
+	}
 
-    addPlayer(id: string) {
-        this.gameState.addSnake(id);
-    }
-    removePlayer(id: string) {
-        this.gameState.removeSnake(id);
-    }
+	handleMessage(id: string, data: any) {
+		if (data.type === 'change_direction') {
+			this.gameState.handleDirectionChange(id, data.direction);
+		}
+	}
 
-    getPublicGameState() {
-        return this.gameState.getPublicGameState();
-    }
+	addPlayer(id: string) {
+		this.gameState.addSnake(id);
+	}
+	removePlayer(id: string) {
+		this.gameState.removeSnake(id);
+	}
 
-    getDimensions() {
-        return { width: this.gameState.width, height: this.gameState.height };
-    }
+	getPublicGameState() {
+		return this.gameState.getPublicGameState();
+	}
+
+	getDimensions() {
+		return { width: this.gameState.width, height: this.gameState.height };
+	}
 }
