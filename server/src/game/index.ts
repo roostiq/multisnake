@@ -4,7 +4,7 @@ import { CollisionManager } from './CollisionManager';
 import { GameRules } from './GameRules';
 
 export class Game {
-	private gameState = new GameState(60, 40);
+	private gameState = new GameState(30, 30);
 	private collisionManager = new CollisionManager(this.gameState);
 	private gameRules = new GameRules(this.gameState);
 	private intervalId: NodeJS.Timeout | null = null;
