@@ -1,28 +1,33 @@
 {
-  "name": "multisnake",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "install:client": "cd client && npm install",
-    "install:server": "cd server && npm install",
-    "install": "npm run install:client && npm run install:server",
-    "dev": "concurrently --kill-others-on-fail  \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:client": "cd client && npm run watch",
-    "dev:server": "cd server && npm run dev",
-    "build:client": "cd client && npm run build",
-    "build:server": "cd server && npm run build",
-    "build": "npm run build:client && npm run build:server",
-    "start": "concurrently --kill-others-on-fail \"npm run start:client\" \"npm run start:server\"",
-    "start:client": "cd client && npm run build",
-    "start:server": "cd server && npm run start"
-  },
-  "devDependencies": {
-    "@types/node": "^20.12.7",
-    "concurrently": "^7.0.0",
-    "prettier": "3.2.5",
-    "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "ws": "^8.16.0"
-  }
+	"name": "multisnake",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"install:client": "cd client && npm install",
+		"install:server": "cd server && npm install",
+		"install": "npm run install:client && npm run install:server",
+		"dev": "concurrently --kill-others-on-fail  \"npm run dev:server\" \"npm run dev:client\"",
+		"build:types": "cd packages/types && npm run build",
+		"prebuild": "npm run build:types",
+		"predev": "npm run build:types",
+		"watch:types": "cd packages/types && npm run watch",
+		"dev:server": "concurrently \"npm run watch:types\" \"cd server && npm run dev\"",
+		"dev:client": "cd client && npm run watch",
+		"build:client": "cd client && npm run build",
+		"build:server": "cd server && npm run build",
+		"build": "npm run build:types && npm run build:client && npm run build:server",
+		"start": "concurrently --kill-others-on-fail \"npm run start:client\" \"npm run start:server\"",
+		"start:client": "cd client && npm run build",
+		"start:server": "cd server && npm run start"
+	},
+	"devDependencies": {
+		"@types/node": "^20.12.7",
+		"concurrently": "^7.0.0",
+		"node-notifier": "^10.0.1",
+		"prettier": "3.2.5",
+		"typescript": "^5.4.5"
+	},
+	"dependencies": {
+		"ws": "^8.16.0"
+	}
 }
