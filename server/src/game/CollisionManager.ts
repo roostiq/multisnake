@@ -2,7 +2,8 @@
 import { GameState } from './GameState';
 import {
 	Snake,
-} from './types';
+} from '@multisnake/types';
+
 export class CollisionManager {
 	constructor(private gameState: GameState) { }
 

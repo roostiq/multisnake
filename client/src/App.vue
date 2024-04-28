@@ -17,14 +17,19 @@ import {
 	reactive,
 } from "vue";
 
+import {
+	Position,
+	Snake,
+	FoodItem,
+	GameState,
+	Direction,
+} from "@multisnake/types";
+
 export default defineComponent({
 	name: "SnakeGame",
 	setup() {
-		const gameCanvas = ref<HTMLCanvasElement | null>(
-			null,
-		);
-		const context =
-			ref<CanvasRenderingContext2D | null>(null);
+		const gameCanvas = ref<HTMLCanvasElement | null>(null);
+		const context = ref<CanvasRenderingContext2D | null>(null);
 		const socket = new WebSocket("ws://localhost:3000");
 
 		const dimensions = reactive({
@@ -32,49 +37,39 @@ export default defineComponent({
 			gameHeight: 1,
 		});
 
-		const drawGame = (state: any) => {
-			if (context.value) {
-				// Clear the canvas
-				context.value.clearRect(
-					0,
-					0,
-					gameCanvas.value!.width,
-					gameCanvas.value!.height,
-				);
-				// Convert object of snakes to array and iterate over it
-				Object.values(state.snakes).forEach(
-					(snake: any) => {
-						snake.segments.forEach(
-							(segment: any) => {
-								context.value!.fillStyle =
-									"lime";
-								context.value!.fillRect(
-									segment.x * 10,
-									segment.y * 10,
-									10,
-									10,
-								);
-							},
-						);
-					},
-				);
+		const drawGame = (state: GameState) => {
+			if (context.value && gameCanvas.value) {
+				const ctx = context.value;
+				const canvas = gameCanvas.value;
 
-				state.food.forEach((item: any) => {
-					context.value!.fillStyle = "red";
-					context.value!.fillRect(
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				state.snakes.forEach((snake) => {
+					snake.segments.forEach((segment) => {
+						ctx.fillStyle = "lime";
+						ctx.fillRect(
+							segment.x * 10,
+							segment.y * 10,
+							10,
+							10,
+						);
+					});
+				});
+
+				state.food.forEach((item) => {
+					ctx.fillStyle = "red";
+					ctx.fillRect(
 						item.position.x * 10,
 						item.position.y * 10,
 						10,
 						10,
 					);
 				});
-
-				// TODO: Draw food and power-ups
 			}
 		};
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			let direction: string | null = null;
+			let direction: Direction | null = null;
 			switch (event.key) {
 				case "ArrowUp":
 					direction = "up";
@@ -101,24 +96,15 @@ export default defineComponent({
 
 		onMounted(() => {
 			if (gameCanvas.value) {
-				context.value =
-					gameCanvas.value.getContext("2d");
+				context.value = gameCanvas.value.getContext("2d");
 			}
 
-			window.addEventListener(
-				"keydown",
-				handleKeyDown,
-			);
+			window.addEventListener("keydown", handleKeyDown);
 			socket.onmessage = (event) => {
 				const message = JSON.parse(event.data);
-				if (
-					message.type === "gameSetup" &&
-					message.dimensions
-				) {
-					dimensions.gameWidth =
-						message.dimensions.width * 10;
-					dimensions.gameHeight =
-						message.dimensions.height * 10;
+				if (message.type === "gameSetup" && message.dimensions) {
+					dimensions.gameWidth = message.dimensions.width * 10;
+					dimensions.gameHeight = message.dimensions.height * 10;
 				} else {
 					const state = JSON.parse(event.data);
 					drawGame(state);
@@ -127,10 +113,7 @@ export default defineComponent({
 		});
 
 		onUnmounted(() => {
-			window.removeEventListener(
-				"keydown",
-				handleKeyDown,
-			);
+			window.removeEventListener("keydown", handleKeyDown);
 			socket.close();
 		});
 

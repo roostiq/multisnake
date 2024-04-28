@@ -3,9 +3,11 @@ import {
 	Snake,
 	Position,
 	Direction,
-} from './types';
-import { FoodItem } from "./types";
+	FoodItem,
+} from '@multisnake/types';
+
 import { randomPosition } from './Utils';
+
 export class GameState implements IGameState {
 	public snakes = new Map<string, Snake>();
 	public food: FoodItem[] = [];
