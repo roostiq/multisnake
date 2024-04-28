@@ -38,7 +38,7 @@ export class GameState implements IGameState {
 
 	addFood() {
 		const food: FoodItem = {
-			position: randomPosition(60, 40),
+			position: randomPosition(this.width, this.height),
 			type: 'apple',
 			scoreValue: 1
 		};

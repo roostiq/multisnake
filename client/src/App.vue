@@ -144,8 +144,8 @@ export default defineComponent({
 
 <style scoped>
 .game-container {
-	width: 600px;
-	height: 400px;
+	width: 300px;
+	height: 300px;
 	margin: auto;
 }
 canvas {
